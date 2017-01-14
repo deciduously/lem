@@ -10,7 +10,7 @@ mod sysinfo;
 #[get("/")]
 fn index() -> String {
     let sysinfo = sysinfo::SysInfo::new();
-    sysinfo.uptime
+    sysinfo.display()
 }
 
 fn main() {
