@@ -5,9 +5,12 @@
 
 extern crate rocket;
 
+mod sysinfo;
+
 #[get("/")]
-fn index() -> &'static str {
-    "Welcome to RED"
+fn index() -> String {
+    let sysinfo = sysinfo::SysInfo::new();
+    sysinfo.uptime
 }
 
 fn main() {
