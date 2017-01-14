@@ -1,8 +1,11 @@
 use std::process::Command;
+use std::string::String;
 
+#[derive(Debug)]
 pub struct SysInfo {
     pub uptime: String,
 }
+
 
 impl SysInfo {
     pub fn new() -> SysInfo {
@@ -15,5 +18,5 @@ fn get_uptime() -> String {
         .arg("p")
         .output()
         .expect("could not retrieve uptime");
-    format!("{}", uptime.status)
+    String::from_utf8(uptime.stdout).unwrap()
 }
