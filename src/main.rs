@@ -1,15 +1,15 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
-#![cfg_attr(feature="clippy", feature(plugin))]
-#![cfg_attr(feature="clippy", plugin(clippy))]
-
 extern crate rocket;
+#[macro_use]
+extern crate serde_json;
+mod models;
 
-mod sysinfo;
+use models::SysInfo;
 
 #[get("/")]
 fn index() -> String {
-    let sysinfo = sysinfo::SysInfo::new();
+    let sysinfo = SysInfo::new();
     sysinfo.display()
 }
 

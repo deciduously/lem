@@ -5,8 +5,9 @@ authors = ["deciduously <bendlovy@gmail.com>"]
 
 [dependencies]
 clippy = {version = "*", optional = true}
-rocket = "0.1.4"
-rocket_codegen = "0.1.4"
+rocket = "0.2"
+rocket_codegen = "0.2"
+serde_json = "0.9"
 
 [features]
 default = []

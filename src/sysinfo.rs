@@ -1,18 +1,26 @@
-use std::process::Command;
-use std::string::String;
+use models::*;
 
-#[derive(Debug)]
-pub struct SysInfo {
-    uptime: String,
+pub fn new() -> SysInfo {
+    SysInfo {
+        uname: strip(get_uname()),
+        uptime: strip(get_uptime()),
+    }
+}
+pub fn display(&self) -> String {
+    format!("RED - {}", self.get_json())
+}
+pub fn get_sysinfo() -> Result<Sysinfo, Error> {
+    return json!({ "uname": self.uname,
+            "uptime": self.uptime});
 }
 
-impl SysInfo {
-    pub fn new() -> SysInfo {
-        SysInfo { uptime: get_uptime() }
-    }
-    pub fn display(&self) -> String {
-      format!("RED - {}", self.uptime)
-    }
+// this pattern looks ripe for learning how macros work, Ben
+fn get_uname() -> String {
+    let uname = Command::new("uname")
+        .arg("-orm")
+        .output()
+        .expect("uname failed");
+    String::from_utf8(uname.stdout).unwrap()
 }
 
 fn get_uptime() -> String {
