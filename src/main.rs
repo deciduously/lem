@@ -52,12 +52,11 @@ pub fn create_entry<'a>(conn: &PgConnection) -> SysInfo {
 fn index() -> String {
     // let sysinfo = SysInfo::new();
     // sysinfo.display()
-    use schema::sysinfo::dsl::*;
+    //use schema::sysinfo::dsl::*;
 
     let connection = establish_connection();
-    create_entry(&connection);
-    let results = sysinfo.limit(5).load::<SysInfo>(&connection).expect("Error loading entries");
-    format!("Displaying {} posts\n", results.len())
+    let new_entry = create_entry(&connection);
+    format!("Successfully inserted record #{}  - uname: {} uptime: {} into the table\n{}", new_entry.id, new_entry.uname, new_entry.uptime, new_entry.datetime)
 }
 
 fn main() {
