@@ -5,6 +5,9 @@ authors = ["deciduously <bendlovy@gmail.com>"]
 
 [dependencies]
 clippy = {version = "*", optional = true}
+diesel = { version = "0.11.0", features = ["postgres"] }
+diesel_codegen = { version = "0.11.0", features = ["postgres"] }
+dotenv = "0.8.0"
 rocket = "0.2"
 rocket_codegen = "0.2"
 serde_json = "0.9"

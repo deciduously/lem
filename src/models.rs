@@ -26,6 +26,7 @@ impl SysInfo {
 // let updates = Command::new("checkupdates")
 // }
 
+//maybe make macros
 fn get_uname() -> String {
     let uname = Command::new("uname")
         .arg("-orm")
