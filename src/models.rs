@@ -1,18 +1,27 @@
+use chrono;
+use super::schema::sysinfo;
 use std::process::Command;
+use serde_json;
 use serde_json::Value;
 
+#[derive(Queryable)]
 pub struct SysInfo {
+    pub id: i32,
+    pub datetime: chrono::NaiveDateTime,
     pub uname: String,
     pub uptime: String,
 }
 
+#[derive(Insertable)]
+#[table_name="sysinfo"]
+pub struct NewSysInfo<'a> {
+    pub datetime: chrono::NaiveDateTime,
+    pub uname: &'a str,
+    pub uptime: &'a str,
+}
+
+
 impl SysInfo {
-    pub fn new() -> SysInfo {
-        SysInfo {
-            uname: strip(get_uname()),
-            uptime: strip(get_uptime()),
-        }
-    }
     pub fn display(&self) -> String {
         format!("RED - {}", self.get_json())
     }
@@ -26,8 +35,8 @@ impl SysInfo {
 // let updates = Command::new("checkupdates")
 // }
 
-//maybe make macros
-fn get_uname() -> String {
+// maybe make macros
+pub fn get_uname() -> String {
     let uname = Command::new("uname")
         .arg("-orm")
         .output()
@@ -35,14 +44,15 @@ fn get_uname() -> String {
     String::from_utf8(uname.stdout).unwrap()
 }
 
-fn get_uptime() -> String {
+pub fn get_uptime() -> String {
     let uptime = Command::new("uptime")
         .arg("-p")
         .output()
         .expect("could not retrieve uptime");
     String::from_utf8(uptime.stdout).unwrap()
 }
-fn strip(s: String) -> String {
+// MAYBE DELETE?
+pub fn strip(s: String) -> String {
     let mut ret = s.clone();
     match ret.pop() {
         Some('\n') => ret,

@@ -1,6 +1,7 @@
 /target/
 .vscode
 .cargo
+.env
 
 # rustfmt makes these
 **/*.rs.bk
