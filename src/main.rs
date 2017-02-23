@@ -2,17 +2,14 @@
 #![plugin(rocket_codegen)]
 extern crate chrono;
 extern crate rocket;
-#[macro_use]
-extern crate serde_json;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
 extern crate rocket_contrib;
 #[macro_use]
 extern crate diesel;
 #[macro_use]
 extern crate diesel_codegen;
 extern crate dotenv;
+#[macro_use]
+extern crate serde_json;
 
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
@@ -22,8 +19,6 @@ use std::env;
 pub mod schema;
 pub mod models;
 
-use models::*;
-
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
 
@@ -32,7 +27,7 @@ pub fn establish_connection() -> PgConnection {
 }
 
 use self::models::{SysInfo, NewSysInfo};
-pub fn create_entry<'a>(conn: &PgConnection) -> SysInfo {
+pub fn create_entry(conn: &PgConnection) -> SysInfo {
     use schema::sysinfo;
     let now = chrono::UTC::now().naive_utc();
 

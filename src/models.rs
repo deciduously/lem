@@ -1,8 +1,7 @@
 use chrono;
 use super::schema::sysinfo;
-use std::process::Command;
 use serde_json;
-use serde_json::Value;
+use std::process::Command;
 
 #[derive(Queryable)]
 pub struct SysInfo {
@@ -25,7 +24,7 @@ impl SysInfo {
     pub fn display(&self) -> String {
         format!("RED - {}", self.get_json())
     }
-    pub fn get_json(&self) -> Value {
+    pub fn get_json(&self) -> serde_json::Value {
         return json!({ "uname": self.uname,
                 "uptime": self.uptime});
     }
