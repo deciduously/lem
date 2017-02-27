@@ -23,54 +23,40 @@ mod models;
 mod sysinfo;
 
 use db::DB;
-use diesel::prelude::*;
-use diesel::pg::PgConnection;
 use error::Error as ApiError;
 use rocket_contrib::JSON;
-use sysinfo::{get_entries, get_entry};
-
-
-use self::models::{SysInfo, NewSysInfo};
-pub fn create_entry(conn: &PgConnection) -> SysInfo {
-    use schema::sysinfo;
-    let now = chrono::UTC::now().naive_utc();
-
-    let new_entry = NewSysInfo {
-        datetime: chrono::NaiveDateTime::new(now.date(), now.time()),
-        uname: models::strip(models::get_uname()),
-        uptime: models::strip(models::get_uptime()),
-    };
-
-    diesel::insert(&new_entry)
-        .into(sysinfo::table)
-        .get_result(conn)
-        .expect("Error saving new entry")
-}
+use rocket::response::status::Created;
+use sysinfo::{create_entry, get_entries, get_entry, get_latest};
 
 #[get("/")]
-fn index(db: DB) -> String {
-
-    let new_entry = create_entry(db.conn());
-    format!("Successfully inserted record #{}  - uname: {} uptime: {} into the table\n{}",
-            new_entry.id,
-            new_entry.uname,
-            new_entry.uptime,
-            new_entry.datetime)
+fn index(db: DB) -> Result<String, ApiError> {
+    let latest = get_latest(db.conn())?;
+    Ok(format!("Most recent record: #{}  - uname: {} uptime: {} into the table\nCreated @ {}",
+               latest.id,
+               latest.uname,
+               latest.uptime,
+               latest.datetime))
 }
 
-
 #[get("/entries", format="application/json")]
-fn entries(db: DB) -> Result<JSON<Vec<SysInfo>>, ApiError> {
+fn entries_get(db: DB) -> Result<JSON<Vec<SysInfo>>, ApiError> {
     let entries = get_entries(db.conn())?;
     Ok(JSON(entries))
 }
 
 #[get("/entry/<id>", format="application/json")]
-fn entry(db: DB, id: i32) -> Result<JSON<SysInfo>, ApiError> {
+fn entry_get(db: DB, id: i32) -> Result<JSON<SysInfo>, ApiError> {
     let entry = get_entry(db.conn(), id)?;
     Ok(JSON(entry))
 }
 
+use self::models::{SysInfo, SysInfoData};
+#[post("/entries", format="application/json")]
+fn entry_create(db: DB) -> Result<Created<JSON<SysInfo>>, ApiError> {
+    let entry = create_entry(db.conn(), &SysInfoData::new())?;
+    let url = format!("/entry/{}", entry.id);
+    Ok(Created(url, Some(JSON(entry))))
+}
 fn main() {
-    rocket::ignite().mount("/", routes![index, entry, entries]).launch();
+    rocket::ignite().mount("/", routes![index, entry_get, entries_get, entry_create]).launch();
 }

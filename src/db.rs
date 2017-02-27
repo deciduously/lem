@@ -14,7 +14,7 @@ lazy_static! {
 
         let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
         let config = r2d2::Config::builder()
-            .pool_size(2)
+            .pool_size(10)
             .build();
         let manager = ConnectionManager::<PgConnection>::new(database_url);
         let pool = r2d2::Pool::new(config, manager).expect("Failed to create pool.");

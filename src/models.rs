@@ -13,10 +13,27 @@ pub struct SysInfo {
 
 #[derive(Insertable, Deserialize)]
 #[table_name="sysinfo"]
-pub struct NewSysInfo {
+pub struct SysInfoData {
     pub datetime: chrono::NaiveDateTime,
     pub uname: String,
     pub uptime: String,
+}
+
+impl Default for SysInfoData {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl SysInfoData {
+    pub fn new() -> SysInfoData {
+        let now = chrono::UTC::now().naive_utc();
+        SysInfoData {
+            datetime: chrono::NaiveDateTime::new(now.date(), now.time()),
+            uname: strip(get_uname()),
+            uptime: strip(get_uptime()),
+        }
+    }
 }
 
 // maybe make macros
