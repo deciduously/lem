@@ -1,14 +1,12 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
+#![plugin(dotenv_macros)]
 extern crate rocket;
 extern crate chrono;
 #[macro_use]
 extern crate diesel;
 #[macro_use]
 extern crate diesel_codegen;
-extern crate dotenv;
-#[macro_use]
-extern crate lazy_static;
 extern crate rocket_contrib;
 extern crate r2d2;
 extern crate r2d2_diesel;
@@ -39,20 +37,20 @@ fn index(conn: Conn) -> Result<String, ApiError> {
                latest.datetime))
 }
 
-#[get("/entries", format="application/json")]
+#[get("/", format="application/json")]
 fn entries_get(conn: Conn) -> Result<JSON<Vec<SysInfo>>, ApiError> {
     let entries = get_entries(&conn)?;
     Ok(JSON(entries))
 }
 
-#[get("/entry/<id>", format="application/json")]
+#[get("/<id>", format="application/json")]
 fn entry_get(conn: Conn, id: i32) -> Result<JSON<SysInfo>, ApiError> {
     let entry = get_entry(&conn, id)?;
     Ok(JSON(entry))
 }
 
 use self::models::{SysInfo, SysInfoData};
-#[post("/entries", format="application/json")]
+#[post("/", format="application/json")]
 fn entry_create(conn: Conn) -> Result<Created<JSON<SysInfo>>, ApiError> {
     let entry = create_entry(&conn, &SysInfoData::new())?;
     let url = format!("/entry/{}", entry.id);
@@ -60,5 +58,9 @@ fn entry_create(conn: Conn) -> Result<Created<JSON<SysInfo>>, ApiError> {
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![index, entry_get, entries_get, entry_create]).launch();
+    rocket::ignite()
+        .manage(db::init_pool())
+        .mount("/", routes![index])
+        .mount("/sysinfo", routes![entry_get, entries_get, entry_create])
+        .launch();
 }
