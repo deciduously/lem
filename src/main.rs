@@ -30,8 +30,9 @@ use sysinfo::{create_entry, get_entries, get_entry, get_latest};
 
 #[get("/")]
 fn index(db: DB) -> Result<String, ApiError> {
+    // TODO handle empty table case
     let latest = get_latest(db.conn())?;
-    Ok(format!("Most recent record: #{}  - uname: {} uptime: {} into the table\nCreated @ {}",
+    Ok(format!("Most recent record: #{}  - uname: {} uptime: {} into the table\nCreated @ {}\n",
                latest.id,
                latest.uname,
                latest.uptime,
@@ -57,6 +58,7 @@ fn entry_create(db: DB) -> Result<Created<JSON<SysInfo>>, ApiError> {
     let url = format!("/entry/{}", entry.id);
     Ok(Created(url, Some(JSON(entry))))
 }
+
 fn main() {
     rocket::ignite().mount("/", routes![index, entry_get, entries_get, entry_create]).launch();
 }
