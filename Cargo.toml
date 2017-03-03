@@ -4,15 +4,15 @@ version = "0.1.0"
 authors = ["deciduously <bendlovy@gmail.com>"]
 
 [dependencies]
-chrono = { version = "0.3", features = ["serde", "rustc-serialize"] }
-diesel = { version = "0.11.0", features = ["postgres", "chrono"] }
-diesel_codegen = { version = "0.11.0", features = ["postgres"] }
-dotenv_macros = "0.10"
-r2d2 = "0.7"
-r2d2-diesel = "0.11"
-rocket = "0.2"
-rocket_codegen = "0.2"
-rocket_contrib = "0.2"
-serde = "0.9"
-serde_derive = "0.9"
-serde_json = "0.9"
+chrono = { version = "0", features = ["serde", "rustc-serialize"] }
+diesel = { version = "0", features = ["postgres", "chrono"] }
+diesel_codegen = { version = "0", features = ["postgres"] }
+dotenv_macros = "0"
+r2d2 = "0"
+r2d2-diesel = "0"
+rocket = "0"
+rocket_codegen = "0"
+rocket_contrib = "0"
+serde = "0"
+serde_derive = "0"
+serde_json = "0"

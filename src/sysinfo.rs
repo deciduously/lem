@@ -5,6 +5,7 @@ use diesel::pg::PgConnection;
 use models::*;
 use super::schema::sysinfo;
 
+//TODO impl FromData for entry to make the Json respone closer to the standard
 pub fn create_entry(conn: &PgConnection, entry: &SysInfoData) -> Result<SysInfo, Error> {
     diesel::insert(entry)
         .into(sysinfo::table)

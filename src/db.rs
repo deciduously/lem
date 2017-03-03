@@ -9,11 +9,11 @@ use std::ops::Deref;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
-pub const DATABASE_FILE: &'static str = dotenv!("DATABASE_URL");
+pub const DATABASE_URL: &'static str = dotenv!("DATABASE_URL");
 
 pub fn init_pool() -> Pool {
     let config = r2d2::Config::default();
-    let manager = ConnectionManager::<PgConnection>::new(DATABASE_FILE);
+    let manager = ConnectionManager::<PgConnection>::new(DATABASE_URL);
     r2d2::Pool::new(config, manager).expect("Failed to create pool.")
 }
 
