@@ -30,12 +30,11 @@ impl Deref for Conn {
 impl<'a, 'r> FromRequest<'a, 'r> for Conn {
     type Error = ();
     fn from_request(request: &'a Request<'r>) -> Outcome<Conn, ()> {
-        let pool =
-            match <State<Pool> as FromRequest>::from_request(request) {
-                Success(pool) => pool,
-                Failure(e) => return Failure(e),
-                Forward(_) => return Forward(()),
-            };
+        let pool = match <State<Pool> as FromRequest>::from_request(request) {
+            Success(pool) => pool,
+            Failure(e) => return Failure(e),
+            Forward(_) => return Forward(()),
+        };
         match pool.get() {
             Ok(conn) => Success(Conn(conn)),
             Err(_) => Failure((Status::InternalServerError, ())),
